@@ -1,92 +1,88 @@
-# SQL SERVER LOG SHIPPING AND REVERSE LOG SHIPPING FOR HIGH AVAILABILITY IN BANKING SYSTEM
+# SQL Server Log Shipping and Reverse Log Shipping for High Availability in Banking System
 
-# Technologies Used :
+---
 
-Database: Microsoft SQL Server 2022  
-Language: T-SQL (Transact-SQL)  
-Management Tool: SQL Server Management Studio (SSMS)  
-Backup & Recovery: SQL Server Agent, SQL Server Jobs  
-Monitoring: SQL Server Log Shipping Monitor, Custom Stored Procedures  
+## Technologies Used :
 
-# Project Overview :
+- **Database:** Microsoft SQL Server 2022  
+- **Language:** T-SQL (Transact-SQL)  
+- **Management Tool:** SQL Server Management Studio (SSMS)  
+- **Backup & Recovery:** SQL Server Agent, SQL Server Jobs  
+- **Monitoring Tools:** SQL Server Log Shipping Monitor, Custom Stored Procedures  
 
-This project implements a **Log Shipping** and **Reverse Log Shipping** solution on a Microsoft SQL Server database designed to simulate
-an **Online Banking Transaction System**. Log shipping is a high-availability and disaster recovery technique that automates the backup 
-of transaction logs on a primary server and restores them on a secondary server to maintain a warm standby.
+## Project Overview :
 
-The database consists of seven tables representing key banking entities and operations. Reverse log shipping is implemented to enable 
-failback and bidirectional synchronization, which provides greater flexibility and reliability in disaster recovery scenarios.
+This project demonstrates a high-availability **Log Shipping and Reverse Log Shipping** setup using **Microsoft SQL Server 2022** to simulate a robust **Online Banking Transaction System**.
 
-# Objectives :
+**Log Shipping** is a disaster recovery technique where **transaction log backups** from a **primary server** are automatically copied and restored to a **secondary server**, maintaining a warm standby replica of the database.
 
-- Establish continuous synchronization of transaction logs from primary to secondary servers to ensure data availability.  
-- Configure reverse log shipping to support failover and failback, allowing the secondary server to become primary and vice versa.  
-- Automate backup, copy, and restore jobs via SQL Server Agent for hands-free disaster recovery.  
-- Enable monitoring of log shipping status and performance through SQL Server built-in tools and custom procedures.  
-- Provide clear scripts and documentation to configure, test, and troubleshoot log shipping environments effectively.  
+**Reverse Log Shipping** extends this concept by allowing failback—making the secondary server act as a new primary and syncing logs in the opposite direction, thus ensuring **bi-directional data synchronization** and high resilience.
 
-# Key Features :
+## Objectives :
 
-- Database Schema: Seven essential tables modeling a realistic banking environment.  
-- Automated Jobs: Scheduled full, transaction log backups, copy jobs, and restore jobs for primary and secondary servers.  
-- Reverse Log Shipping: Scripts to enable log shipping in both directions, enhancing availability.  
-- Monitoring: Utilization of SQL Server Log Shipping Monitor and custom monitoring stored procedures.  
-- Error Handling & Troubleshooting: Guidelines and scripts to handle common issues like LSN mismatches and job failures.  
-- Security: Proper permissions for SQL Server Agent accounts and secure network share access for log file transfers.  
+- Establish **continuous transaction log synchronization** from primary to secondary to ensure high data availability.  
+-  Configure **reverse log shipping** to support seamless failover and failback.  
+-  Automate **backup**, **copy**, and **restore** operations using **SQL Server Agent Jobs**.  
+-  Enable real-time **monitoring** through SQL Server’s built-in tools and custom stored procedures.  
+-  Provide a detailed **documentation set** for setup, testing, and troubleshooting.  
 
-# Database Tables Overview :
+## Key Features :
 
-| Table Name           | Description                                                                                      |
-|----------------------|------------------------------------------------------------------------------------------------|
-| `Customers`          | Stores customer personal details such as name, contact info, and address.                       |
-| `Accounts`           | Represents different bank accounts held by customers, including account types and balances.    |
-| `Transactions`       | Logs all financial transactions linked to accounts, including deposits, withdrawals, and transfers. |
-| `Branches`           | Contains details about bank branches, including location, contact information, and manager.    |
-| `Cards`              | Stores information about debit and credit cards issued to customers, including card status.    |
-| `TransactionStatus`  | Tracks the status of transactions (e.g., Pending, Completed, Failed) for auditing and tracking.|
-| `LoginActivity`      | Logs customer login attempts, including timestamps, IP addresses, and success/failure status.  |
+-  **Database Schema :** Includes 7 interconnected tables modeling real-world banking operations.  
+-  **Automation :** Scheduled jobs for full backups, transaction log backups, file copying, and restores.  
+-  **Reverse Log Shipping Support :** Full scripting for primary-to-secondary and secondary-to-primary transitions.  
+-  **Monitoring and Reporting :** Using SQL Server Log Shipping Monitor and custom queries.  
+-  **Troubleshooting Toolkit :** Includes solutions for **LSN mismatches**, **job failures**, and other common issues.  
+-  **Security-First Design :** Uses secure SQL logins, agent credentials, and restricted access to backup folders.  
 
-## Detailed Functional Queries :
+##  Database Tables Overview :
 
-This section provides essential queries used in the project for data retrieval, backup, restore, and monitoring the log shipping process.
+| Table Name           | Description                                                                 |
+|----------------------|-----------------------------------------------------------------------------|
+| **Customers**        | Stores customer details like full name, contact info, and address.         |
+| **Accounts**         | Tracks customer accounts including type and balance.                       |
+| **Transactions**     | Logs all deposits, withdrawals, and transfers with timestamp.              |
+| **Branches**         | Contains metadata about bank branches such as location and manager.       |
+| **Cards**            | Maintains records of debit/credit cards issued to customers.              |
+| **TransactionStatus**| Lists statuses (Pending, Completed, Failed) for transaction auditing.     |
+| **LoginActivity**    | Logs login attempts, IPs, timestamps, and outcomes (success/failure).      |
+
+---
+
+## Sample Functional Queries :
 
 -- Retrieve all customers
-
 **SELECT * FROM Customers;**
 
 -- Get accounts and balances for a specific customer
-
 **SELECT AccountID, AccountType, Balance 
 FROM Accounts 
 WHERE CustomerID = 20;**
 
 -- List recent transactions for a specific account
-
 **SELECT TOP 10 TransactionID, TransactionDate, Amount, StatusID 
 FROM Transactions 
 WHERE AccountID = 15 
 ORDER BY TransactionDate DESC;**
 
 -- Retrieve branch details
-
 **SELECT * FROM Branches;**
 
 -- Get active cards for a customer
-
 **SELECT * FROM Cards 
 WHERE CustomerID = 1 AND CardStatus = 'Active';**
 
 -- View all transaction statuses
-
 **SELECT * FROM TransactionStatus;**
 
 -- Check recent login activities for audit
-
 **SELECT TOP 20 CustomerID, LoginTime, IPAddress, LoginResult 
 FROM LoginActivity 
 ORDER BY LoginTime DESC;**
 
--- View overall monitoring status of log shipping
+## Monitoring Stored Procedures :
+
+-- View overall log shipping monitor status
 
 **EXEC master.dbo.sp_help_log_shipping_monitor;**
 
@@ -100,35 +96,54 @@ ORDER BY LoginTime DESC;**
 **EXEC master.dbo.sp_help_log_shipping_secondary_database 
     @secondary_database = 'BankingDB';**
 
-# Security and Access Control :
+## Security and Access Control :
 
-- SQL Server Authentication is used for all database connections.
-- SQL Server Agent jobs run under service accounts with read/write access to shared backup folders.
-- Access to backup directories is limited to authorized service accounts on both primary and secondary servers.
-- Permissions to configure and monitor log shipping are restricted to DBAs and system administrators only.
+To ensure a secure and controlled Log Shipping environment, the following **security measures** are implemented:
 
-# Testing & Validation :
+-  **SQL Server Authentication** is used to establish all database connections securely.
+-  **SQL Server Agent Jobs** are executed under **dedicated service accounts** with **read/write** access to the **network-shared backup folder**.
+-  Access to **backup directories** is strictly restricted to **authorized service accounts** on both **primary** and **secondary servers**.
+-  Only users with **Database Administrator (DBA)** or **System Administrator** privileges are permitted to configure or monitor the log shipping infrastructure.
 
-The log shipping and reverse log shipping setup was validated by:
+These configurations maintain **data integrity**, prevent unauthorized access, and ensure that **log backups and restores** happen smoothly across servers.
 
-- Performing multiple transactions on the primary server (inserting rows in `Transactions`).
-- Monitoring whether transaction logs were correctly backed up, copied, and restored on the secondary server.
-- Using `RESTORE FILELISTONLY` and `msdb` system tables to verify the log sequence chain.
-- Simulating failover by recovering the secondary server and confirming data consistency.
+## Testing & Validation :
 
-# Troubleshooting :
+To validate the effectiveness and consistency of the **Log Shipping and Reverse Log Shipping** configuration, the following **real-world testing scenarios** were performed:
 
-- **LSN Mismatch Error:** Ensure no logs are skipped; restore in exact backup sequence.
-- **Job Failure:** Check SQL Agent job history, and confirm folder/network access permissions.
-- **Stuck in Restoring State:** This is expected unless `WITH RECOVERY` is used.
-- **Copy Job Issues:** Make sure shared folders are accessible from both servers.
+-  **Simulated multiple transactions** (e.g., inserting records into the `Transactions` table) on the **primary server**.
+-  Verified that **transaction log backups** were **successfully created**, **copied**, and **restored** on the **secondary server** without errors.
+-  Used `RESTORE FILELISTONLY` and queried **SQL Server system tables** like `msdb.dbo.backupset` to verify that the **Log Sequence Numbers (LSNs)** were intact and followed a consistent chain.
+-  Simulated a **failover** scenario by recovering the secondary server using `WITH RECOVERY`, validated application access, and confirmed **data consistency** post-failback.
 
-# Conclusion :
+These tests confirm that the setup is **resilient**, **automated**, and **suitable for high-availability production environments**.
 
-This project demonstrates a full-cycle setup of Log Shipping and Reverse Log Shipping in SQL Server using a banking database simulation. It includes all critical DBA tasks — database design, backup, disaster recovery, monitoring, and job automation — making it a valuable hands-on showcase of high availability practices in real-world enterprise environments.
+## Troubleshooting :
 
+Below is a list of **common issues** encountered during Log Shipping and **recommended solutions**:
 
+| Issue                      | Recommended Solution                                                                 |
+|----------------------------|--------------------------------------------------------------------------------------|
+| **LSN Mismatch Error**   | Ensure that **no log backup is skipped**, and that all logs are restored in exact sequence. |
+| **SQL Agent Job Failure**| Review **job history logs**, check for failed steps, and ensure that **network shares** are accessible. |
+| **Stuck in Restoring**   | This is **expected behavior** unless you run a `RESTORE DATABASE ... WITH RECOVERY` command to finalize the restore. |
+| **Copy Job Issues**      | Ensure that **shared folder paths** are correct and accessible by **both servers**. Test path access manually if needed. |
 
+These guidelines help proactively resolve issues and reduce downtime.
 
+## Conclusion :
 
+This project showcases a **complete disaster recovery and high-availability solution** using **SQL Server Log Shipping and Reverse Log Shipping** in a **Banking Transaction Database** context.
 
+It demonstrates hands-on expertise in:
+
+-  **Database Design** and **Entity Modeling**
+-  **Automated Backup/Restore Scripting**
+-  **Primary-to-Secondary Log Shipping Setup**
+-  **Secondary-to-Primary Reverse Shipping Configuration**
+-  **Real-Time Monitoring** via SQL Server tools and system stored procedures
+-  **Troubleshooting and Performance Validation**
+
+Through structured testing, security configuration, and job scheduling, this project mirrors real-world enterprise **DBA responsibilities**, making it a **perfect portfolio project** for roles involving **SQL Server Administration**, **Disaster Recovery Planning**, or **Enterprise Database Management**.
+
+---
