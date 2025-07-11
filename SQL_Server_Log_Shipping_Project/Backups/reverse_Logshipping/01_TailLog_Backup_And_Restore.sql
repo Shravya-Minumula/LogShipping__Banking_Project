@@ -1,0 +1,9 @@
+---Take TAIL LOG BACKUP from S2
+BACKUP LOG BankingDB
+TO DISK = 'C:\LS_SHARED1\BankingDB_TailLog.trn'
+WITH NORECOVERY;
+
+---Restore TAIL LOG on S1
+RESTORE LOG BankingDB
+FROM DISK = 'C:\LS_SHARED1\BankingDB_TailLog.trn'
+WITH RECOVERY;
