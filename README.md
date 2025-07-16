@@ -52,49 +52,64 @@ This project demonstrates a high-availability **Log Shipping and Reverse Log Shi
 ## Sample Functional Queries :
 
 -- Retrieve all customers
-**SELECT * FROM Customers;**
-
+```sql
+SELECT * FROM Customers;
+```
 -- Get accounts and balances for a specific customer
-**SELECT AccountID, AccountType, Balance 
+```sql
+SELECT AccountID, AccountType, Balance 
 FROM Accounts 
-WHERE CustomerID = 20;**
-
+WHERE CustomerID = 20;
+```
 -- List recent transactions for a specific account
-**SELECT TOP 10 TransactionID, TransactionDate, Amount, StatusID 
+```sql
+SELECT TOP 10 TransactionID, TransactionDate, Amount, StatusID 
 FROM Transactions 
 WHERE AccountID = 15 
-ORDER BY TransactionDate DESC;**
+ORDER BY TransactionDate DESC;
+```
 
 -- Retrieve branch details
-**SELECT * FROM Branches;**
+```sql
+SELECT * FROM Branches;
+```
 
 -- Get active cards for a customer
-**SELECT * FROM Cards 
-WHERE CustomerID = 1 AND CardStatus = 'Active';**
+```sql
+SELECT * FROM Cards 
+WHERE CustomerID = 1 AND CardStatus = 'Active';
+```
 
 -- View all transaction statuses
-**SELECT * FROM TransactionStatus;**
+```sql
+SELECT * FROM TransactionStatus;
+```
 
 -- Check recent login activities for audit
-**SELECT TOP 20 CustomerID, LoginTime, IPAddress, LoginResult 
+```sql
+SELECT TOP 20 CustomerID, LoginTime, IPAddress, LoginResult 
 FROM LoginActivity 
-ORDER BY LoginTime DESC;**
+ORDER BY LoginTime DESC;
+```
 
 ## Monitoring Stored Procedures :
 
 -- View overall log shipping monitor status
-
-**EXEC master.dbo.sp_help_log_shipping_monitor;**
+```sql
+EXEC master.dbo.sp_help_log_shipping_monitor;
+```
 
 -- View configuration details of primary database for log shipping
-
-**EXEC master.dbo.sp_help_log_shipping_primary_database 
-    @database = 'BankingDB';**
+```sql
+EXEC master.dbo.sp_help_log_shipping_primary_database 
+    @database = 'BankingDB';
+```
 
 -- View configuration details of secondary database for log shipping
-
-**EXEC master.dbo.sp_help_log_shipping_secondary_database 
-    @secondary_database = 'BankingDB';**
+```sql
+EXEC master.dbo.sp_help_log_shipping_secondary_database 
+    @secondary_database = 'BankingDB';
+```
 
 ## Security and Access Control :
 
